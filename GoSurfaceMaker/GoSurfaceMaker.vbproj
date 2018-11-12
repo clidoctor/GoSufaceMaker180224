@@ -5,12 +5,13 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{5CA3A10E-E717-4C89-ACFD-806F49356E0E}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
-    <StartupObject>GoSurfaceMaker.My.MyApplication</StartupObject>
+    <OutputType>Library</OutputType>
+    <StartupObject>
+    </StartupObject>
     <RootNamespace>GoSurfaceMaker</RootNamespace>
     <AssemblyName>GoSurfaceMaker</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <MyType>WindowsForms</MyType>
+    <MyType>Windows</MyType>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -97,17 +98,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\x86\Debug\commonLib.dll</HintPath>
     </Reference>
-    <Reference Include="GoSdkNet, Version=1.0.6821.12440, Culture=neutral, PublicKeyToken=3e18828f1dab5c8c, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\x86\Debug\GoSdkNet.dll</HintPath>
-    </Reference>
-    <Reference Include="halcondotnet, Version=12.0.0.0, Culture=neutral, PublicKeyToken=4973bed59ddbf2b8, processorArchitecture=MSIL">
+    <Reference Include="halcondotnet, Version=10.0.0.0, Culture=neutral, PublicKeyToken=4973bed59ddbf2b8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\x86\Debug\halcondotnet.dll</HintPath>
-    </Reference>
-    <Reference Include="kApiNet, Version=1.0.6807.11768, Culture=neutral, PublicKeyToken=aed51b4e56ae495f, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\x86\Debug\kApiNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -171,6 +164,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>

@@ -60,21 +60,49 @@ Public Class Form1
     End Sub
 
     Private curImage As HObject
+
     Private Sub btnGetHalconImage_Click(sender As Object, e As EventArgs) Handles btnGetHalconImage.Click
         Dim errMsg As String = ""
         Dim image As New HObject
-        Dim imgArray(0) As Byte
+
+        Dim ImgArray(0) As Byte
         Dim imgWidth, imgHeight As Integer
-        If Not mSurfaceMaker.getHalconImage(image, 1, imgArray, imgWidth, imgHeight) Then
+
+        If Not mSurfaceMaker.getHalconImage(image, 5, ImgArray, imgWidth, imgHeight) Then
             MsgBox("error in getting halcon image", MsgBoxStyle.Critical)
             Exit Sub
         End If
         curImage = image
-        HOperatorSet.WriteImage(curImage, "bmp", 0, "C:\Users\lgche\Desktop\tempImage\yuan14.bmp")
-        PictureBox1.Image = imageArray2Bitmap(imgArray, imgWidth, imgHeight)
+        HOperatorSet.WriteImage(curImage, "bmp", 0, "C:\Users\lgche\Desktop\tempImage\yuan30.bmp")
+
+
+        PictureBox1.Image = imageArray2Bitmap(ImgArray, imgWidth, imgHeight)
+
+        'mSurfaceMaker.getHalconImage(image, 3, imgArray, imgWidth, imgHeight)
+
+        'If Not mSurfaceMaker.getHalconImage(image, intensityImage, 1, imgArray, intensityImgArray, imgWidth, imgHeight) Then
+        '    MsgBox("error in getting halcon image", MsgBoxStyle.Critical)
+        '    Exit Sub
+        'End If
+
+        'curHeightImage = image
+        'curIntensityImage = intensityImage
+
+        'HOperatorSet.WriteImage(curIntensityImage, "bmp", 0, "C:\Users\lgche\Desktop\tempImage\yuan17.bmp")
+
+        'If checkHieght.Checked Then
+
+        'PictureBox1.Image = imageArray2Bitmap(imgArray, imgWidth, imgHeight)
+        'Else
+        '    PictureBox1.Image = imageArray2Bitmap(intensityImgArray, imgWidth, imgHeight)
+        'End If
+
 
 
         MsgBox("激光关闭完成。")
+    End Sub
+    Private Sub checkIntensity_CheckedChanged(sender As Object, e As EventArgs) Handles checkIntensity.CheckedChanged
+        btnGetHalconImage_Click(sender, e)
     End Sub
 
     Private Sub btnSaveImage_Click(sender As Object, e As EventArgs) Handles btnSaveImage.Click
@@ -148,4 +176,6 @@ Public Class Form1
         mSurfaceMaker.LoadSetting()
         MsgBox("配置加载成功")
     End Sub
+
+
 End Class

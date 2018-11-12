@@ -72,6 +72,9 @@ Public Class GoSurfaceMaker
         Public isUpsideDownImage1 As Boolean
         Public isUpsideDownImage2 As Boolean
         Public isUpsideDownImage3 As Boolean
+        Public isUpsideDownImage4 As Boolean
+        Public isUpsideDownImage5 As Boolean
+        Public isUpsideDownImage6 As Boolean
 
         Public ignoreBeginProfilesNb As Integer '忽略开始的几条轮廓
 
@@ -81,6 +84,7 @@ Public Class GoSurfaceMaker
         Public FOV_Z_Start As Single
         Public FOV_Z_Range As Single
 
+        Public ImageForIntensity As Boolean
 
         'Base and glue track segmentation
         Public isUseSegmentation As Boolean
@@ -92,11 +96,18 @@ Public Class GoSurfaceMaker
         Public SegBaseMeasurementRegion1 As SegBaseMeasurementRegion
         Public SegBaseMeasurementRegion2 As SegBaseMeasurementRegion
         Public SegBaseMeasurementRegion3 As SegBaseMeasurementRegion
+        Public SegBaseMeasurementRegion4 As SegBaseMeasurementRegion
+        Public SegBaseMeasurementRegion5 As SegBaseMeasurementRegion
+        Public SegBaseMeasurementRegion6 As SegBaseMeasurementRegion
 
         Public isUseSegmentationMask As Boolean
+        Public MaskForIntensity As Boolean
         Public SegBaseMaskRegion1 As SegBaseMaskRegion
         Public SegBaseMaskRegion2 As SegBaseMaskRegion
         Public SegBaseMaskRegion3 As SegBaseMaskRegion
+        Public SegBaseMaskRegion4 As SegBaseMaskRegion
+        Public SegBaseMaskRegion5 As SegBaseMaskRegion
+        Public SegBaseMaskRegion6 As SegBaseMaskRegion
 
         'Top and Glue track segmentation
         Public isUseSegmentationTopTrack As Boolean
@@ -113,6 +124,10 @@ Public Class GoSurfaceMaker
         Public SegTopTrackRegion8 As SegTopTrackRegion
         Public SegTopTrackRegion9 As SegTopTrackRegion
         Public SegTopTrackRegion10 As SegTopTrackRegion
+        Public SegTopTrackRegion11 As SegTopTrackRegion
+        Public SegTopTrackRegion12 As SegTopTrackRegion
+        Public SegTopTrackRegion13 As SegTopTrackRegion
+        Public SegTopTrackRegion14 As SegTopTrackRegion
 
 
         'Edge Smoothing
@@ -165,6 +180,9 @@ Public Class GoSurfaceMaker
             SegBaseMeasurementRegion1 = New SegBaseMeasurementRegion
             SegBaseMeasurementRegion2 = New SegBaseMeasurementRegion
             SegBaseMeasurementRegion3 = New SegBaseMeasurementRegion
+            SegBaseMeasurementRegion4 = New SegBaseMeasurementRegion
+            SegBaseMeasurementRegion5 = New SegBaseMeasurementRegion
+            SegBaseMeasurementRegion6 = New SegBaseMeasurementRegion
 
             'Top and Glue track segmentation
             SegTopTrackHeightShift = -12
@@ -180,6 +198,10 @@ Public Class GoSurfaceMaker
             SegTopTrackRegion8 = New SegTopTrackRegion
             SegTopTrackRegion9 = New SegTopTrackRegion
             SegTopTrackRegion10 = New SegTopTrackRegion
+            SegTopTrackRegion11 = New SegTopTrackRegion
+            SegTopTrackRegion12 = New SegTopTrackRegion
+            SegTopTrackRegion13 = New SegTopTrackRegion
+            SegTopTrackRegion14 = New SegTopTrackRegion
 
 
 
@@ -187,6 +209,9 @@ Public Class GoSurfaceMaker
             SegBaseMaskRegion1 = New SegBaseMaskRegion
             SegBaseMaskRegion2 = New SegBaseMaskRegion
             SegBaseMaskRegion3 = New SegBaseMaskRegion
+            SegBaseMaskRegion4 = New SegBaseMaskRegion
+            SegBaseMaskRegion5 = New SegBaseMaskRegion
+            SegBaseMaskRegion6 = New SegBaseMaskRegion
 
             'Edge Smoothing Regions
             EdgeSmoothingRegion1 = New EdgeSmoothingRegion
@@ -554,7 +579,245 @@ Public Class GoSurfaceMaker
         closeLaser()
         Return True
     End Function
-    Public Function getHalconImage(ByRef image As HObject, Optional RunID As Integer = 0, Optional ByRef imgArray() As Byte = Nothing, Optional ByRef imgWidth As Integer = 0, Optional ByRef imgHeight As Integer = 0) As Boolean
+    'Public Function getHalconImage(ByRef image As HObject, Optional RunID As Integer = 0, Optional ByRef imgArray() As Byte = Nothing, Optional ByRef imgWidth As Integer = 0, Optional ByRef imgHeight As Integer = 0) As Boolean
+    '    Dim width As Integer = mSet.imageWidth
+    '    Dim height As Integer = mSet.imageHeight 'mSet,解析xml
+    '    Dim imageResolution As Single = mSet.imageResolution 'mm/row pixel
+    '    Dim encoderResolution As Single = mSet.encoderResolution 'mm/tick
+    '    Dim X_Start As Single = mSet.FOV_X_Start
+    '    Dim X_Range As Single = mSet.FOV_X_Range
+    '    Dim Z_Start As Single = mSet.FOV_Z_Start
+    '    Dim Z_Range As Single = mSet.FOV_Z_Range
+    '    Dim Z_Resolution As Double = 255 / Z_Range
+
+    '    Try
+    '        If mProfilesBuffer Is Nothing Then Return False
+    '        If mProfilesBuffer.Count <= mSet.ignoreBeginProfilesNb Then Return False
+
+    '        Dim beginIndex As Integer = mSet.ignoreBeginProfilesNb
+
+
+    '        Dim imageArray(height - 1, width - 1) As Byte
+    '        'll
+    '        Dim imageIntensityArray(height - 1, width - 1) As Byte
+
+    '        Dim lastRowIndex As Integer = 0
+    '        Dim bufferCount As Integer = mProfilesBuffer.Count
+
+    '        mSw.Reset() : mSw.Start() '计时
+
+    '        'save data first
+    '        If mSet.isSaveData Then '保存数据setting.xml中改为true
+    '            mCurrentDataNameCountNb = RunID
+    '            Dim thrdStart As New Threading.Thread(AddressOf SaveData)
+    '            thrdStart.Start()
+    '        End If
+
+    '        'check if is upsidedown image 检查是否让图像上下倒置
+    '        Dim isUpsideDownImage As Boolean = False '根据xml中的设置是否颠倒图像
+    '        Select Case RunID
+    '            Case 1
+    '                isUpsideDownImage = mSet.isUpsideDownImage1
+    '            Case 2
+    '                isUpsideDownImage = mSet.isUpsideDownImage2
+    '            Case 3
+    '                isUpsideDownImage = mSet.isUpsideDownImage3
+    '            Case 4
+    '                isUpsideDownImage = mSet.isUpsideDownImage4
+    '            Case 5
+    '                isUpsideDownImage = mSet.isUpsideDownImage5
+    '            Case 6
+    '                isUpsideDownImage = mSet.isUpsideDownImage6
+    '            Case Else
+    '                MsgBox("允许6张图")
+    '                Return False
+    '        End Select
+    '        Dim startIndex As Integer = beginIndex
+    '        Dim endIndex As Integer = bufferCount - 1
+    '        Dim stepSize As Integer = 1
+    '        If isUpsideDownImage Then '如果需要颠倒，首尾坐标互换
+    '            startIndex = bufferCount - 1
+    '            endIndex = beginIndex
+    '            stepSize = -1
+    '        End If
+    '        Dim lastEncoder As Long = mProfilesBuffer(startIndex).encoder '获取起始轮廓脉冲值
+    '        '''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+
+    '        For i As Integer = startIndex To endIndex Step stepSize
+    '            '算出当前是第几行--》根据脉冲
+    '            Dim curtRowIndex As Integer = CInt(lastRowIndex + Math.Abs((mProfilesBuffer(i).encoder - lastEncoder)) * encoderResolution / imageResolution)
+    '            lastEncoder = mProfilesBuffer(i).encoder
+
+    '            If curtRowIndex >= height Then Exit For 'exceed the image height
+
+    '            Dim pointsLength As Integer = mProfilesBuffer(i).zBytes.Length '一条轮廓z轴点的个数
+    '            Dim points = mProfilesBuffer(i).zBytes
+    '            'll
+    '            Dim mIntensityPoints = mIntensityProfileBuffer(i).intensity
+
+
+    '            'filling rows by profiles
+    '            Dim XStartIndex As Integer = 0
+    '            Dim XEndIndex As Integer = pointsLength - 1
+    '            Dim XStepSize As Integer = 1
+    '            If mSet.isFlipingX Then '是否反向
+    '                XStartIndex = pointsLength - 1
+    '                XEndIndex = 0
+    '                XStepSize = -1
+    '            End If
+    '            Dim curtColIndex As Integer = 0
+    '            For j As Integer = XStartIndex To XEndIndex Step XStepSize '将轮廓中的点收集在imageArray数组中
+    '                'assume one point per pixel
+    '                If curtColIndex >= width Then 'exceed the image width
+    '                    Exit For
+    '                End If
+    '                imageArray(curtRowIndex, curtColIndex) = points(j) '将高度信息赋给每一行每一列（改成亮度）
+    '                'll
+    '                imageIntensityArray(curtRowIndex, curtColIndex) = mIntensityPoints(j)
+
+    '                curtColIndex += 1
+    '            Next
+
+    '            '如果当前行与上一行的间距大于1 补一行（补亮度）
+    '            If curtRowIndex - lastRowIndex > 1 And mSet.isFillingRows Then ' fill the rows for big spacing rows
+    '                calcFillingRows(imageArray, lastRowIndex, curtRowIndex)
+
+    '                'll
+    '                calcFillingRows(imageIntensityArray, lastRowIndex, curtRowIndex)
+    '            End If
+    '            lastRowIndex = curtRowIndex
+    '        Next
+
+    '        'Apply Base-Track Segmentation 底板与点胶台分割
+    '        If mSet.isUseSegmentation And Not mSet.isUseSegmentationTopTrack And RunID <> 0 Then
+    '            Dim segRegion As New SegBaseMeasurementRegion
+    '            Select Case RunID
+    '                Case 1
+    '                    segRegion = mSet.SegBaseMeasurementRegion1
+    '                Case 2
+    '                    segRegion = mSet.SegBaseMeasurementRegion2
+    '                Case 3
+    '                    segRegion = mSet.SegBaseMeasurementRegion3
+    '                Case 4
+    '                    segRegion = mSet.SegBaseMeasurementRegion4
+    '                Case 5
+    '                    segRegion = mSet.SegBaseMeasurementRegion5
+    '                Case 6
+    '                    segRegion = mSet.SegBaseMeasurementRegion6
+    '                Case 7
+    '                    MsgBox("允许6张图")
+    '                    Return False
+    '            End Select
+    '            '原版
+    '            'If Not SegBaseTrack(RunID, imageArray, segRegion) Then
+    '            '    Debug.Print("No Segmentation Applied: The segmentation base regions includes invalid base measurements.")
+    '            'End If
+
+    '            'll
+    '            If Not SegBaseTrack(RunID, imageArray, imageIntensityArray, segRegion) Then
+    '                Debug.Print("No Segmentation Applied: The segmentation base regions includes invalid base measurements.")
+    '            End If
+    '        End If
+    '        ''''''''''''''''''''''''''''''''''''''
+
+    '        If mSet.isUseSegmentationTopTrack And RunID <> 0 Then
+
+    '        End If
+
+    '        'Appy Top-Track Segmentation 外立面顶点与点胶台分割
+    '        Dim mSw3 As New Stopwatch : mSw3.Start()
+    '        If mSet.isUseSegmentation And mSet.isUseSegmentationTopTrack And RunID <> 0 Then 'Only enabled when using segmentation
+    '            '原版
+    '            'applyTopTrackSegmentation(imageArray, RunID, mSet.SegTopTrackRegion1) '搜索区域内大于 最高点向下偏移12的点变为255，其它点变为0
+    '            'applyTopTrackSegmentation(imageArray, RunID, mSet.SegTopTrackRegion2)
+    '            'applyTopTrackSegmentation(imageArray, RunID, mSet.SegTopTrackRegion3)
+    '            'applyTopTrackSegmentation(imageArray, RunID, mSet.SegTopTrackRegion4)
+    '            'applyTopTrackSegmentation(imageArray, RunID, mSet.SegTopTrackRegion5)
+    '            'applyTopTrackSegmentation(imageArray, RunID, mSet.SegTopTrackRegion6)
+    '            'applyTopTrackSegmentation(imageArray, RunID, mSet.SegTopTrackRegion7)
+    '            'applyTopTrackSegmentation(imageArray, RunID, mSet.SegTopTrackRegion8)
+    '            'applyTopTrackSegmentation(imageArray, RunID, mSet.SegTopTrackRegion9)
+    '            'applyTopTrackSegmentation(imageArray, RunID, mSet.SegTopTrackRegion10)
+
+    '            'll
+    '            Select Case RunID
+    '                Case 1
+    '                    applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion1) '搜索区域内大于 最高点向下偏移12的点变为255，其它点变为0
+    '                    applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion2)
+    '                    applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion3)
+    '                Case 2
+    '                    applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion4)
+    '                    applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion5)
+    '                Case 3
+    '                    applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion6)
+    '                    applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion7)
+    '                Case 4
+    '                    applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion8)
+    '                    applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion9)
+    '                Case 5
+    '                    applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion10)
+    '                    applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion11)
+    '                Case 6
+    '                    applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion12)
+    '                    applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion13)
+    '                    applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion14)
+    '            End Select
+    '        End If
+    '        mSw3.Stop()
+    '        Debug.Print("Top-Track Segmentation spent: " & mSw3.ElapsedMilliseconds)
+    '        ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+
+    '        'Appy Edge Smoothing
+    '        Dim mSw4 As New Stopwatch : mSw4.Start()
+    '        If mSet.isUseEdgeSmoothing And mSet.isUseSegmentation Then 'Only enabled when using segmentation
+    '            applyEdgeSmoothing(imageArray, RunID, mSet.EdgeSmoothingRegion1)
+    '            applyEdgeSmoothing(imageArray, RunID, mSet.EdgeSmoothingRegion2)
+    '            applyEdgeSmoothing(imageArray, RunID, mSet.EdgeSmoothingRegion3)
+    '            applyEdgeSmoothing(imageArray, RunID, mSet.EdgeSmoothingRegion4)
+    '            applyEdgeSmoothing(imageArray, RunID, mSet.EdgeSmoothingRegion5)
+    '            applyEdgeSmoothing(imageArray, RunID, mSet.EdgeSmoothingRegion6)
+    '            applyEdgeSmoothing(imageArray, RunID, mSet.EdgeSmoothingRegion7)
+    '            applyEdgeSmoothing(imageArray, RunID, mSet.EdgeSmoothingRegion8)
+    '        End If
+    '        mSw4.Stop()
+    '        Debug.Print("Edge Smoothing spent: " & mSw4.ElapsedMilliseconds)
+    '        ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+
+    '        'write to Halcon Image
+    '        'convert imageArray to Halcon Image
+    '        Dim mSw2 As New Stopwatch : mSw2.Start()
+    '        HOperatorSet.GenImageConst(image, "byte", width, height)
+    '        Dim imgPtr As IntPtr
+    '        HOperatorSet.GetImagePointer1(image, imgPtr, New Integer, New Integer, New Integer)
+
+    '        Dim mArrayByte(width * height - 1) As Byte
+    '        System.Buffer.BlockCopy(imageArray, 0, mArrayByte, 0, width * height)
+    '        Marshal.Copy(mArrayByte, 0, imgPtr, width * height)
+    '        'mArrayByte = Nothing
+    '        mSw2.Stop()
+    '        Debug.Print("Halcon Image conversion spent: " & mSw2.ElapsedMilliseconds)
+
+    '        '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+    '        'output the array
+    '        imgArray = mArrayByte
+    '        imgWidth = width
+    '        imgHeight = height
+    '        ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+    '        mSw.Stop()
+    '        Debug.Print("getHalconImage spent: " & mSw.ElapsedMilliseconds)
+
+    '        Return True
+    '    Catch ex As Exception
+    '        MsgBox(ex.Message)
+    '        Return False
+    '    Finally
+    '        GC.Collect()
+    '    End Try
+    'End Function
+    Public Function getHalconImage(ByRef image As HObject, Optional RunID As Integer = 0, Optional ByRef ImgArray() As Byte = Nothing, Optional ByRef imgWidth As Integer = 0, Optional ByRef imgHeight As Integer = 0) As Boolean
         Dim width As Integer = mSet.imageWidth
         Dim height As Integer = mSet.imageHeight 'mSet,解析xml
         Dim imageResolution As Single = mSet.imageResolution 'mm/row pixel
@@ -573,6 +836,7 @@ Public Class GoSurfaceMaker
 
 
             Dim imageArray(height - 1, width - 1) As Byte
+            Dim imageSegmentArray(height - 1, width - 1) As Byte
             'll
             Dim imageIntensityArray(height - 1, width - 1) As Byte
 
@@ -597,6 +861,12 @@ Public Class GoSurfaceMaker
                     isUpsideDownImage = mSet.isUpsideDownImage2
                 Case 3
                     isUpsideDownImage = mSet.isUpsideDownImage3
+                Case 4
+                    isUpsideDownImage = mSet.isUpsideDownImage4
+                Case 5
+                    isUpsideDownImage = mSet.isUpsideDownImage5
+                Case 6
+                    isUpsideDownImage = mSet.isUpsideDownImage6
             End Select
             Dim startIndex As Integer = beginIndex
             Dim endIndex As Integer = bufferCount - 1
@@ -655,6 +925,29 @@ Public Class GoSurfaceMaker
                 lastRowIndex = curtRowIndex
             Next
 
+            If (Not mSet.isUseSegmentationMask) And (Not mSet.ImageForIntensity) Then
+                HOperatorSet.GenImageConst(image, "byte", width, height)
+                Dim imgPtr As IntPtr
+                HOperatorSet.GetImagePointer1(image, imgPtr, New Integer, New Integer, New Integer)
+                Dim mArrayByte(width * height - 1) As Byte
+                System.Buffer.BlockCopy(imageArray, 0, mArrayByte, 0, width * height)
+                Marshal.Copy(mArrayByte, 0, imgPtr, width * height)
+                ImgArray = mArrayByte
+            End If
+
+            If (Not mSet.isUseSegmentationMask) And mSet.ImageForIntensity Then
+                HOperatorSet.GenImageConst(image, "byte", width, height) 'll
+                Dim imgIntensityPtr As IntPtr 'll
+                HOperatorSet.GetImagePointer1(image, imgIntensityPtr, New Integer, New Integer, New Integer) 'll
+                Dim mIntensityByte(width * height - 1) As Byte 'll
+                System.Buffer.BlockCopy(imageIntensityArray, 0, mIntensityByte, 0, width * height) 'll
+                Marshal.Copy(mIntensityByte, 0, imgIntensityPtr, width * height)
+                ImgArray = mIntensityByte
+            End If
+
+
+
+
             'Apply Base-Track Segmentation 底板与点胶台分割
             If mSet.isUseSegmentation And Not mSet.isUseSegmentationTopTrack And RunID <> 0 Then
                 Dim segRegion As New SegBaseMeasurementRegion
@@ -665,6 +958,15 @@ Public Class GoSurfaceMaker
                         segRegion = mSet.SegBaseMeasurementRegion2
                     Case 3
                         segRegion = mSet.SegBaseMeasurementRegion3
+                    Case 4
+                        segRegion = mSet.SegBaseMeasurementRegion4
+                    Case 5
+                        segRegion = mSet.SegBaseMeasurementRegion5
+                    Case 6
+                        segRegion = mSet.SegBaseMeasurementRegion6
+                    Case Else
+                        MsgBox("允许6张图")
+                        Return False
                 End Select
                 '原版
                 'If Not SegBaseTrack(RunID, imageArray, segRegion) Then
@@ -672,6 +974,9 @@ Public Class GoSurfaceMaker
                 'End If
 
                 'll
+                If mSet.isUseSegmentationMask And (Not mSet.MaskForIntensity) Then '如果mask区域需要覆盖高度图，亮度数组直接指向高度数组
+                    imageIntensityArray = imageArray
+                End If
                 If Not SegBaseTrack(RunID, imageArray, imageIntensityArray, segRegion) Then
                     Debug.Print("No Segmentation Applied: The segmentation base regions includes invalid base measurements.")
                 End If
@@ -684,7 +989,7 @@ Public Class GoSurfaceMaker
 
             'Appy Top-Track Segmentation 外立面顶点与点胶台分割
             Dim mSw3 As New Stopwatch : mSw3.Start()
-            If mSet.isUseSegmentationTopTrack And RunID <> 0 Then 'Only enabled when using segmentation
+            If mSet.isUseSegmentation And mSet.isUseSegmentationTopTrack And RunID <> 0 Then 'Only enabled when using segmentation
                 '原版
                 'applyTopTrackSegmentation(imageArray, RunID, mSet.SegTopTrackRegion1) '搜索区域内大于 最高点向下偏移12的点变为255，其它点变为0
                 'applyTopTrackSegmentation(imageArray, RunID, mSet.SegTopTrackRegion2)
@@ -698,16 +1003,31 @@ Public Class GoSurfaceMaker
                 'applyTopTrackSegmentation(imageArray, RunID, mSet.SegTopTrackRegion10)
 
                 'll
-                applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion1) '搜索区域内大于 最高点向下偏移12的点变为255，其它点变为0
-                applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion2)
-                applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion3)
-                applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion4)
-                applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion5)
-                applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion6)
-                applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion7)
-                applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion8)
-                applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion9)
-                applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion10)
+                If mSet.isUseSegmentationMask And (Not mSet.MaskForIntensity) Then '如果mask区域需要覆盖高度图，亮度数组直接指向高度数组
+                    imageIntensityArray = imageArray
+                End If
+                Select Case RunID
+                    Case 1
+                        applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion1) '搜索区域内大于 最高点向下偏移12的点变为255，其它点变为0
+                        applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion2)
+                        applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion3)
+                    Case 2
+                        applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion4)
+                        applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion5)
+                    Case 3
+                        applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion6)
+                        applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion7)
+                    Case 4
+                        applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion8)
+                        applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion9)
+                    Case 5
+                        applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion10)
+                        applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion11)
+                    Case 6
+                        applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion12)
+                        applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion13)
+                        applyTopTrackSegmentation(imageIntensityArray, imageArray, RunID, mSet.SegTopTrackRegion14)
+                End Select
             End If
             mSw3.Stop()
             Debug.Print("Top-Track Segmentation spent: " & mSw3.ElapsedMilliseconds)
@@ -716,7 +1036,8 @@ Public Class GoSurfaceMaker
 
             'Appy Edge Smoothing
             Dim mSw4 As New Stopwatch : mSw4.Start()
-            If mSet.isUseEdgeSmoothing And mSet.isUseSegmentation Then 'Only enabled when using segmentation
+            If mSet.isUseEdgeSmoothing And mSet.isUseSegmentation Then 'Only enabled when using segmentation 
+                'task
                 applyEdgeSmoothing(imageArray, RunID, mSet.EdgeSmoothingRegion1)
                 applyEdgeSmoothing(imageArray, RunID, mSet.EdgeSmoothingRegion2)
                 applyEdgeSmoothing(imageArray, RunID, mSet.EdgeSmoothingRegion3)
@@ -734,26 +1055,28 @@ Public Class GoSurfaceMaker
             'write to Halcon Image
             'convert imageArray to Halcon Image
             Dim mSw2 As New Stopwatch : mSw2.Start()
-            HOperatorSet.GenImageConst(image, "byte", width, height)
-            Dim imgPtr As IntPtr
-            HOperatorSet.GetImagePointer1(image, imgPtr, New Integer, New Integer, New Integer)
+
+            If mSet.isUseSegmentation And True Then
+                HOperatorSet.GenImageConst(image, "byte", width, height)
+                Dim segmentImgPtr As IntPtr
+                HOperatorSet.GetImagePointer1(image, segmentImgPtr, New Integer, New Integer, New Integer)
+                Dim mSegmentArrayByte(width * height - 1) As Byte
+                System.Buffer.BlockCopy(imageArray, 0, mSegmentArrayByte, 0, width * height)
+                Marshal.Copy(mSegmentArrayByte, 0, segmentImgPtr, width * height)
+                ImgArray = mSegmentArrayByte
+            End If
 
 
-            Dim mArrayByte(width * height - 1) As Byte
-            System.Buffer.BlockCopy(imageArray, 0, mArrayByte, 0, width * height)
-            Marshal.Copy(mArrayByte, 0, imgPtr, width * height)
+
             'mArrayByte = Nothing
             mSw2.Stop()
             Debug.Print("Halcon Image conversion spent: " & mSw2.ElapsedMilliseconds)
-
             '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
             'output the array
-            imgArray = mArrayByte
             imgWidth = width
             imgHeight = height
             ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-
 
             mSw.Stop()
             Debug.Print("getHalconImage spent: " & mSw.ElapsedMilliseconds)
@@ -766,6 +1089,9 @@ Public Class GoSurfaceMaker
             GC.Collect()
         End Try
     End Function
+
+
+
     Private Sub calcFillingRows(ByRef imageArray(,) As Byte, ByVal lastRowIndex As Integer, ByVal curtRowIndex As Integer)
         Dim width As Integer = UBound(imageArray, 2) + 1
         Dim nbFillingRows As Integer = curtRowIndex - lastRowIndex - 1
@@ -1070,7 +1396,7 @@ Public Class GoSurfaceMaker
             Dim idxVal As New indexval
             idxVal.IdxStart = i * imgLengthPerThread
             idxVal.IdxEnd = (i + 1) * imgLengthPerThread - 1
-            Dim thread = New Threading.Thread(AddressOf applySegmentation)
+            Dim thread = New Threading.Thread(AddressOf applySegmentation) '大于baseHeight+ mSet.SegHeightShift为255，小于的为0
             threads.Add(thread)
             thread.Start(idxVal)
         Next
@@ -1096,9 +1422,20 @@ Public Class GoSurfaceMaker
             'applySegmentationMaskRegion(runID, imgArray, mImgArray, mSet.SegBaseMaskRegion3)
 
             'll
-            applySegmentationMaskRegion(runID, imgIntensityArray, mImgArray, mSet.SegBaseMaskRegion1)
-            applySegmentationMaskRegion(runID, imgIntensityArray, mImgArray, mSet.SegBaseMaskRegion2)
-            applySegmentationMaskRegion(runID, imgIntensityArray, mImgArray, mSet.SegBaseMaskRegion3)
+            Select Case runID
+                Case 1
+                    applySegmentationMaskRegion(runID, imgIntensityArray, mImgArray, mSet.SegBaseMaskRegion1)
+                Case 2
+                    applySegmentationMaskRegion(runID, imgIntensityArray, mImgArray, mSet.SegBaseMaskRegion2)
+                Case 3
+                    applySegmentationMaskRegion(runID, imgIntensityArray, mImgArray, mSet.SegBaseMaskRegion3)
+                Case 4
+                    applySegmentationMaskRegion(runID, imgIntensityArray, mImgArray, mSet.SegBaseMaskRegion4)
+                Case 5
+                    applySegmentationMaskRegion(runID, imgIntensityArray, mImgArray, mSet.SegBaseMaskRegion5)
+                Case 6
+                    applySegmentationMaskRegion(runID, imgIntensityArray, mImgArray, mSet.SegBaseMaskRegion6)
+            End Select
         End If
         '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
         sw.Stop()
@@ -1194,9 +1531,20 @@ Public Class GoSurfaceMaker
 
         'll
         If mSet.isUseSegmentationMask Then
-            applySegmentationMaskRegion(runID, imgIntensityArray, imageArray, mSet.SegBaseMaskRegion1)
-            applySegmentationMaskRegion(runID, imgIntensityArray, imageArray, mSet.SegBaseMaskRegion2)
-            applySegmentationMaskRegion(runID, imgIntensityArray, imageArray, mSet.SegBaseMaskRegion3)
+            Select Case runID
+                Case 1
+                    applySegmentationMaskRegion(runID, imgIntensityArray, imageArray, mSet.SegBaseMaskRegion1)
+                Case 2
+                    applySegmentationMaskRegion(runID, imgIntensityArray, imageArray, mSet.SegBaseMaskRegion2)
+                Case 3
+                    applySegmentationMaskRegion(runID, imgIntensityArray, imageArray, mSet.SegBaseMaskRegion3)
+                Case 4
+                    applySegmentationMaskRegion(runID, imgIntensityArray, imageArray, mSet.SegBaseMaskRegion4)
+                Case 5
+                    applySegmentationMaskRegion(runID, imgIntensityArray, imageArray, mSet.SegBaseMaskRegion5)
+                Case 6
+                    applySegmentationMaskRegion(runID, imgIntensityArray, imageArray, mSet.SegBaseMaskRegion6)
+            End Select
         End If
 
     End Sub

@@ -37,6 +37,8 @@ Partial Class Form1
         Me.btnResetSensor = New System.Windows.Forms.Button()
         Me.btnSaveImage = New System.Windows.Forms.Button()
         Me.btnReloadSetting = New System.Windows.Forms.Button()
+        Me.checkHieght = New System.Windows.Forms.RadioButton()
+        Me.checkIntensity = New System.Windows.Forms.RadioButton()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -160,11 +162,36 @@ Partial Class Form1
         Me.btnReloadSetting.Text = "重加配置"
         Me.btnReloadSetting.UseVisualStyleBackColor = True
         '
+        'checkHieght
+        '
+        Me.checkHieght.AutoSize = True
+        Me.checkHieght.Checked = True
+        Me.checkHieght.Location = New System.Drawing.Point(638, 645)
+        Me.checkHieght.Name = "checkHieght"
+        Me.checkHieght.Size = New System.Drawing.Size(59, 16)
+        Me.checkHieght.TabIndex = 16
+        Me.checkHieght.TabStop = True
+        Me.checkHieght.Text = "高度图"
+        Me.checkHieght.UseVisualStyleBackColor = True
+        '
+        'checkIntensity
+        '
+        Me.checkIntensity.AutoSize = True
+        Me.checkIntensity.Location = New System.Drawing.Point(754, 645)
+        Me.checkIntensity.Name = "checkIntensity"
+        Me.checkIntensity.Size = New System.Drawing.Size(59, 16)
+        Me.checkIntensity.TabIndex = 17
+        Me.checkIntensity.TabStop = True
+        Me.checkIntensity.Text = "亮度图"
+        Me.checkIntensity.UseVisualStyleBackColor = True
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(976, 650)
+        Me.ClientSize = New System.Drawing.Size(987, 730)
+        Me.Controls.Add(Me.checkIntensity)
+        Me.Controls.Add(Me.checkHieght)
         Me.Controls.Add(Me.btnReloadSetting)
         Me.Controls.Add(Me.btnSaveImage)
         Me.Controls.Add(Me.btnResetSensor)
@@ -183,6 +210,7 @@ Partial Class Form1
         Me.Text = "Form1"
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
     Friend WithEvents Timer1 As System.Windows.Forms.Timer
@@ -199,5 +227,6 @@ Partial Class Form1
     Friend WithEvents btnResetSensor As System.Windows.Forms.Button
     Friend WithEvents btnSaveImage As System.Windows.Forms.Button
     Friend WithEvents btnReloadSetting As System.Windows.Forms.Button
-
+    Friend WithEvents checkHieght As RadioButton
+    Friend WithEvents checkIntensity As RadioButton
 End Class
